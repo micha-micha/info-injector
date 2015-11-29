@@ -1,0 +1,76 @@
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+<script type="text/javascript">
+function formatBirthday(stringDate){
+  var date = new Date(stringDate);
+  return date.toISOString();
+};
+  var rootRef = new Firebase('https://micha-y-micha.firebaseio.com/');
+  var usersRef = rootRef.child("users");
+  usersRef.set({
+    dubrox: {
+      birthday: formatBirthday("1980-10-02 02:00"),
+      email: "uncorreo@correo.com",
+      first_name: "Luca",
+      last_name: "Lauretta"
+    },
+    dsmontoya: {
+      birthday: formatBirthday("1994-11-12 02:00"),
+      email: "jejesillo@correo.com",
+      first_name: "Daniel",
+      last_name: "Montoya"
+    },
+    sofia: {
+      birthday: formatBirthday("1990-12-01 02:00"),
+      email: "pipipopo@correo.com",
+      first_name: "Sofía",
+      last_name: "Ríos"
+    },
+    javiermontoya: {
+      birthday: formatBirthday("1960-04-08 02:00"),
+      email: "javier_montoya@correo.com",
+      first_name: "Javier",
+      last_name: "Montoya"
+    }
+  });
+
+  var creditsRef = rootRef.child("credits");
+  var credit = creditsRef.push({
+    title: "Quiero hacer crecer mi venta de pollos",
+    description: "Es necesario escoger la mejor descripción para este espacio.",
+    user: "javiermontoya",
+    amount: 10000,
+    months: 12,
+    interest_rate: 15,
+    photo_url: "http://fotos01.laprovincia.es/2013/08/02/646x260/tiempos-pollos.jpg",
+    status: "pending"
+  });
+
+  var paymentsRef = rootRef.child("payments");
+  var arr = ["dubrox", "dsmontoya", "sofia"];
+  for (var i = 0; i < arr.length; i++) {
+    var payment = paymentsRef.push({
+      amount: 600,
+      currency: "mxn",
+      medium: "card",
+      gateway: "openpay",
+      reference: "blahblablah",
+      user: arr[i],
+      credit: credit.key(),
+      approved: true
+    });
+
+    console.log(payment.amount)
+
+    var transactionsRef = rootRef.child("transactions");
+    transactionsRef.push({
+      amount: 600, //Dunno how to call it from payments.
+      payment: payment.key()
+    });
+  }
+
+  function destroyAll(){
+    creditsRef.set({});
+    paymentsRef.set({});
+    transactionsRef.set({});
+  }
+</script>

@@ -34,38 +34,50 @@ function formatBirthday(stringDate){
   });
 
   var creditsRef = rootRef.child("credits");
-  var credit = creditsRef.push({
-    title: "Quiero hacer crecer mi venta de pollos",
-    description: "Es necesario escoger la mejor descripciÃ³n para este espacio.",
+
+  var creditsArray = [{
+    title: "Hacer crecer mi venta de pollos",
+    description: "Es necesario escoger la mejor descripción para este espacio.",
     user: "javiermontoya",
     amount: 10000,
     months: 12,
     interest_rate: 15,
+    expiration_date: formatBirthday("2015-12-29 00:00"),
     photo_url: "http://fotos01.laprovincia.es/2013/08/02/646x260/tiempos-pollos.jpg",
     status: "pending"
-  });
+  },
+  {
+    title: "mis vacaciones",
+    description: "Es necesario escoger la mejor descripción para este espacio.",
+    user: "javiermontoya",
+    amount: 900,
+    months: 12,
+    interest_rate: 15,
+    expiration_date: formatBirthday("2015-12-29 00:00"),
+    photo_url: "http://tainobeach.com/wp-content/uploads/2015/04/Vacation.jpg",
+    status: "active"
+  }];
 
-  var paymentsRef = rootRef.child("payments");
-  var arr = ["dubrox", "dsmontoya", "sofia"];
-  for (var i = 0; i < arr.length; i++) {
-    var payment = paymentsRef.push({
-      amount: 600,
-      currency: "mxn",
-      medium: "card",
-      gateway: "openpay",
-      reference: "blahblablah",
-      user: arr[i],
-      credit: credit.key(),
-      approved: true
-    });
+  console.log(creditsArray)
 
-    console.log(payment.amount)
-
-    var transactionsRef = rootRef.child("transactions");
-    transactionsRef.push({
-      amount: 600, //Dunno how to call it from payments.
-      payment: payment.key()
-    });
+  for (var a = 0; a < creditsArray.length; a++) {
+    console.log(creditsArray[a])
+    var credit = creditsRef.push(creditsArray[a]),
+      arr = ["dubrox", "dsmontoya", "ana"];
+      console.log(credit.key())
+    for (var i = 0; i < arr.length; i++) {
+      var transactionsRef = rootRef.child("transactions");
+      transactionsRef.push({
+        amount: creditsArray[a] == "pending" ? 600 : 300,
+        currency: "mxn",
+        medium: "card",
+        gateway: "openpay",
+        reference: "blahblablah",
+        user: arr[i],
+        credit: credit.key(),
+        approved: true
+      });
+    }
   }
 
   function destroyAll(){
